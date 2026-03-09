@@ -1,144 +1,273 @@
-# C-project
-# Vehicle Control System 🚗
+#include<stdio.h>
+#include<Stdlib.h>
+#define WITH_ENGINE_TEMP_CONTROLLER 0 //define WITH_ENGINE_TEMP_CONTROLLER as 1 to enable engine temperature controller
+// N is Defined as ON ... F is Defined as OFF
+typedef enum //define the vehicle system
+{
+	TurnONTheVehicle='a',
+	TurnOFFTheVehicle='b',
+	QuiteTheSystem='c'
+}System;
+typedef enum //define the sensor types
+{
 
-## Overview
+	Turnofftheengine='a',
+	Setthetrafficlightcolor='b',
+	Settheroomtemperature='c',
+	Settheenginetemperature='d'
+}Sensor;
+typedef enum //define the traffic lights colors
+{
+	green='G',
+	red='R',
+	orange='O'
 
-This project simulates a **Vehicle Control System** using the C programming language.
-The system allows the user to control the vehicle engine and simulate sensor readings such as traffic lights, room temperature, and engine temperature.
+}TrafficColors;
+typedef enum //give a constant values fot all Tempretures
+{
+	HighRoomTEMP=40,
+	LowRoomTEMP=10,
+	HighEngineTEMP=150,
+	LowEngineTEMP=100
 
-Based on the sensor inputs, the system automatically adjusts:
+}Tempretures;
+typedef enum
+{
+	speedHIGH=100,
+	speedLow=30,
+	speedZERO=0
 
-* Vehicle speed
-* Air Conditioning (AC) state
-* Engine Temperature Controller state
+}Speeds;
+typedef enum //set default values foe temps
+{
+	defaultROOMTEMP=20,
+	defaultENGINETEMPS=125
 
-The project demonstrates the use of:
+}DefaultTEMPS;
+struct Data //define the data which should appear every time when the system on
+{
+	char Engine; //ON OR OFF
+	char AC; //ON OR OFF
+	int vehicleSpeed; //IN KM\H
+	int RoomTempreture;  //IN CELSUIS
+	char EngTempController; //ON OR OFF
+	int EngineTemp; //IN CELSUIS
 
-* Conditional statements
-* Loops
-* User input handling
-* Preprocessor directives
-* Basic embedded systems logic
+}vehicle;
+// Declare global variables
+struct Data Vehicle; // the vehicle object
+char input; // the user input
+char traffic_light; // the traffic light color
 
----
 
-## Features
+// Declare helper functions
+void print_menu(); // print the main menu
+void print_sensors_menu(); // print the sensors menu
+void print_vehicle_state(); // print the current vehicle state
+void update_vehicle_state(); // update the vehicle state based on user input and sensor readings
+void get_input(); // get a character input from the user
 
-* Turn the vehicle engine **ON / OFF**
-* Simulate **traffic light sensor**
-* Simulate **room temperature sensor**
-* Simulate **engine temperature sensor**
-* Automatic control of:
+int main()
+{
+	setvbuf(stdout, NULL, _IONBF, 0);
+	//intilaize the vehicle massage at first
+	vehicle.Engine='F';
+	vehicle.AC='F';
+	vehicle.vehicleSpeed=speedZERO;
+	vehicle.RoomTempreture=defaultROOMTEMP;
+	vehicle.EngineTemp=defaultENGINETEMPS;
+	vehicle.EngTempController='F';
 
-  * Vehicle speed
-  * Air Conditioning (AC)
-  * Engine Temperature Controller
-* Continuous sensor monitoring while the engine is ON
-* Display the **current vehicle state** after every action
+	while(1)
+	{
+        print_menu();
+		get_input();
 
----
 
-## System Logic
+if(input==QuiteTheSystem) //the last choice in the system
+	{
+		setvbuf(stdout, NULL, _IONBF, 0);
+		printf("TRY TO RUN THE SYSTEM AGAIN , THAMK YOU. \n \n");
+		break;//to go out from the system
+	}
+	else if(input==TurnOFFTheVehicle)//if the user chose to turn off the vehicle the engine will be off
+	{
+		setvbuf(stdout, NULL, _IONBF, 0);
+		vehicle.Engine='F';
+		printf("The Engine is Turned OFF. \n \n");
+		print_menu();
 
-### Traffic Light Sensor
+	}
+	 if(input==TurnONTheVehicle) //if the user chose to turn on the vehicle the engine will be on
+		{
+		setvbuf(stdout, NULL, _IONBF, 0);
+			vehicle.Engine='N';
+			//printf("The Engine is Turned ON. \n \n");
+			//print_sensors_menu();///////////////////////////////////////
+		}
 
-| Traffic Light | Vehicle Speed |
-| ------------- | ------------- |
-| G (Green)     | 100 km/h      |
-| O (Orange)    | 30 km/h       |
-| R (Red)       | 0 km/h        |
 
----
+	else
+	{
+		setvbuf(stdout, NULL, _IONBF, 0);
+		printf("Invalid Data ... \n \n");
+		continue;
+	}
+	//continue;
 
-### Room Temperature Sensor
+	if(vehicle.Engine == 'N')///////
+	{
+		// Print the sensors menu
+		 print_sensors_menu();
 
-* If temperature < 10 → AC **ON** and set temperature to **20**
-* If temperature > 30 → AC **ON** and set temperature to **20**
-* Otherwise → AC **OFF**
+		 // Get the user input
+		   get_input();
+		   if(input==Turnofftheengine)
+		   {
+			   setvbuf(stdout, NULL, _IONBF, 0);
+			   printf("TRY TO RUN THE SYSTEM AGAIN , THAMK YOU. \n");
+			   		break;//to go out from the system
+		   }
+		   else if(input==Setthetrafficlightcolor)
+		   {
+		       //scanf(" %c",&traffic_light);
+		       update_vehicle_state();
+			   setvbuf(stdout, NULL, _IONBF, 0);
+			   printf("Enter The Traffic Color (G,O,R) : \n ");
+			   scanf(" %c",&traffic_light);
+			   update_vehicle_state();
+			   printf("The traffic light color is set to %c.\n\n", traffic_light);
+			   print_vehicle_state();
 
----
+		   }
+		   else if(input==Settheroomtemperature)
+		   {setvbuf(stdout, NULL, _IONBF, 0);
+		         printf("Enter the room temperature (°C): ");
+		         scanf("%d", &vehicle.RoomTempreture);
+		         update_vehicle_state();
+		         printf("The room temperature is set to %d °C.\n\n", vehicle.RoomTempreture);
+		         print_vehicle_state();
 
-### Engine Temperature Sensor
 
-* If temperature < 100 → Engine Temperature Controller **ON** and set temperature to **125**
-* If temperature > 150 → Engine Temperature Controller **ON** and set temperature to **125**
-* Otherwise → Engine Temperature Controller **OFF**
+		   }
+		   else if(input==Settheenginetemperature)
+		   {
+			   setvbuf(stdout, NULL, _IONBF, 0);
+			   printf("Enter the Engine temperature (°C): ");
+			   scanf("%d", &vehicle.EngineTemp);
+			   update_vehicle_state();
+			    printf("The room temperature is set to %d °C.\n\n", vehicle.EngineTemp);
+			     print_vehicle_state();
+		   }
+		   else
+		   {
+		      // Invalid input
+		       printf("Invalid input. Please try again.\n\n");
+		        continue;
+            }
+		   update_vehicle_state();//to update all inputs data
+		   //print_vehicle_state(); //to print the all data with new set values
+}
 
----
+}
+	return 0;
+	}
 
-### Special Case
+void print_menu()
+{
+	setvbuf(stdout, NULL, _IONBF, 0);
+	printf("%c .Turn On The Vehicle Engine \n ",TurnONTheVehicle);
+	printf("%c .Turn Off The Vehicle Engine \n ",TurnOFFTheVehicle);
+	printf("%c .Quite The System \n ",QuiteTheSystem);
 
-If the vehicle speed becomes **30 km/h**:
+}
+void print_sensors_menu()
+{
+	setvbuf(stdout, NULL, _IONBF, 0);
+	printf("%c .Turn Off The Engine \n",Turnofftheengine);
+    printf("%c .Set the traffic light color.\n",Setthetrafficlightcolor);
+    printf("%c .Set the room temperature (Temperature Sensor) \n ",Settheroomtemperature);
+    printf("%c .Set the engine temperature (Engine Temperature Sensor) \n",Settheenginetemperature);
 
-* Turn **AC ON** if it was OFF and set
-  `Room Temperature = Current Temperature * (5/4) + 1`
+}
+void print_vehicle_state()
+{
+printf("The Current Vehicle State is : \n");
+printf("Engine state: %c\n", vehicle.Engine);
+printf("AC: %c\n", vehicle.AC);
+printf("Vehicle speed: %d km/h\n", vehicle.vehicleSpeed);
+printf("Room temperature: %d °C\n", vehicle.RoomTempreture);
+#if WITH_ENGINE_TEMP_CONTROLLER //check if the engine temp is enabled
+    printf("Engine temperature controller state: %c\n", vehicle.EngTempController);
+#endif
+    printf("Engine temperature: %d °C\n\n", vehicle.EngineTemp);
+}
+void update_vehicle_state()
+{
 
-* Turn **Engine Temperature Controller ON** if it was OFF and set
-  `Engine Temperature = Current Temperature * (5/4) + 1`
+	if(traffic_light==green)
+	{
+		vehicle.vehicleSpeed=speedHIGH;
+	}
+	else if(traffic_light==red)
+	{
+		vehicle.vehicleSpeed=speedLow;
+	}
+	else if(traffic_light==orange)
+	{
+		vehicle.vehicleSpeed=speedZERO;
+	}
+	if(vehicle.RoomTempreture<LowRoomTEMP)
+	{
+		vehicle.AC='N';
+		vehicle.RoomTempreture=defaultROOMTEMP;
+	}
+	else if(vehicle.RoomTempreture>HighRoomTEMP)
+	{
+		vehicle.AC='N';
+		vehicle.RoomTempreture=defaultROOMTEMP;
+	}
+	else
+	{
+		vehicle.AC='F';
+     }
+#if  WITH_ENGINE_TEMP_CONTROLLER
+	if(vehicle.EngineTemp < LowEngineTEMP)
+	{
+		vehicle.EngTempController='N';
+		vehicle.EngineTemp=defaultENGINETEMPS;
+	}
+	else if(vehicle.EngineTemp > HighEngineTEMP)
+	{
+		vehicle.EngTempController='N';
+		vehicle.EngineTemp=defaultENGINETEMPS;
+	}
+	else
+	{
+		vehicle.EngTempController='F';
+	}
+#endif
+	if(vehicle.vehicleSpeed==speedLow)
+	{
+		vehicle.AC='N';
+		vehicle.RoomTempreture=vehicle.RoomTempreture*(5/4)+1;
+	}
+#if WITH_ENGINE_TEMP_CONTROLLER
+	if(vehicle.vehicleSpeed==speedLow)
+	{
+		vehicle.EngTempController='N';
+		Vehicle.RoomTempreture=vehicle.RoomTempreture*(5/4)+1;
 
----
+	}
+#endif
 
-## Vehicle State Output
 
-After applying sensor logic, the system displays:
+}
+void get_input()
+{
+	setvbuf(stdout, NULL, _IONBF, 0);
 
-* Engine State (ON / OFF)
-* AC State (ON / OFF)
-* Vehicle Speed
-* Room Temperature
-* Engine Temperature Controller State
-* Engine Temperature
+	 printf("Enter your choice: ");
+		    scanf(" %c",&input);
+}
 
----
-
-## Bonus Feature
-
-The project includes a **preprocessor directive**:
-
-```c
-#define WITH_ENGINE_TEMP_CONTROLLER 1
-```
-
-If set to **1** → Engine Temperature Controller code will compile and run.
-If set to **0** → All related code will be excluded during compilation.
-
-This simulates **conditional compilation used in embedded systems**.
-
----
-
-## Technologies Used
-
-* C Programming Language
-* GCC Compiler
-* Console-based interface
-
----
-
-## How to Run
-
-1. Compile the program:
-
-```bash
-gcc vehicle_control.c -o vehicle
-```
-
-2. Run the program:
-
-```bash
-./vehicle
-```
-
-3. Follow the menu instructions in the console.
-
----
-
-## Project Purpose
-
-This project was developed as part of learning **Embedded C fundamentals**, focusing on implementing a **vehicle control logic system using sensors simulation**.
-
----
-
-## Author
-
-Huda Esam
-Junior Software QA Tester | Learning Embedded Systems
